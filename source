@@ -1,0 +1,198 @@
+--//
+local runsrv = game:GetService('RunService')
+local gui = game:GetService('StarterGui')
+local fag = game.Players.LocalPlayer
+local char = fag.Character
+local mouse = fag:GetMouse()
+local cam = workspace.CurrentCamera
+local funcs = {}
+local vt3 = Vector3.new
+local cf = CFrame.new
+
+_G.reanimated = true
+
+function addfunc(func)
+	table.insert(funcs, func)
+end
+
+function notif(title, txt, dur)
+	gui:SetCore('SendNotification', {
+		Title = title,
+		Text = txt,
+		Duration = dur or 5,
+	})
+end
+--//
+for _, v in next, char:GetDescendants() do
+	if v:IsA('BasePart') then
+		addfunc(runsrv.Heartbeat:Connect(function()
+			pcall(function()
+				v.Velocity = vt3(0,35,0)
+				sethiddenproperty(fag,'MaximumSimulationRadius',math.huge)
+				sethiddenproperty(fag,'SimulationRadius',999999999)
+				fag.ReplicationFocus = workspace
+			end)
+		end))
+	end
+end
+--//
+local folder = Instance.new('Folder', char)
+folder.Name = 'reanimFolder'
+
+char.Archivable = true
+local reanim = char:Clone()
+reanim.Name = 'reanim'
+
+for _, v in next, reanim:GetDescendants() do
+	if v:IsA('BasePart') then
+		v.Transparency = 1
+		addfunc(runsrv.Heartbeat:Connect(function()
+			pcall(function()
+				v.Velocity = vt3(0,35,0)
+				sethiddenproperty(fag,'MaximumSimulationRadius',math.huge)
+				sethiddenproperty(fag,'SimulationRadius',999999999)
+				fag.ReplicationFocus = workspace
+			end)
+		end))
+	elseif v:IsA('Decal') then v.Transparency = 1 end
+end
+
+fag.Character = nil
+fag.Character = char
+local hum = char.Humanoid
+hum.AutoRotate = false
+hum.WalkSpeed = 0
+hum.JumpPower = 0
+char.Torso.Anchored = false
+notif('Reanimation enabled', 'Reanimated.')
+char.Humanoid.Health = 0
+reanim.Parent = folder
+reanim.HumanoidRootPart.CFrame = char.HumanoidRootPart.CFrame*CFrame.new(0,5,0)
+
+function create(part, par, pos, rot)
+	Instance.new("Attachment",part)
+	Instance.new("AlignPosition",part)
+	Instance.new("AlignOrientation",part)
+	Instance.new("Attachment",par)
+	part.Attachment.Name = part.Name
+	par.Attachment.Name = part.Name
+	part.AlignPosition.Attachment0 = part[part.Name]
+	part.AlignOrientation.Attachment0 = part[part.Name]
+	part.AlignPosition.Attachment1 = par[part.Name]
+	part.AlignOrientation.Attachment1 = par[part.Name]
+	par[part.Name].Position = pos or vt3()
+	part[part.Name].Orientation = rot or vt3()
+	part.AlignPosition.MaxForce = 999999999
+	part.AlignPosition.MaxVelocity = math.huge
+	part.AlignPosition.ReactionForceEnabled = false
+	part.AlignPosition.Responsiveness = math.huge
+	part.AlignOrientation.Responsiveness = math.huge
+	part.AlignPosition.RigidityEnabled = false
+	part.AlignOrientation.MaxTorque = 999999999
+	part.Massless=true
+end
+
+function setpos(part, par, pos)
+	Instance.new("Attachment",part)
+	Instance.new("AlignPosition",part)
+	Instance.new("Attachment",par)
+	part.Attachment.Name = part.Name
+	par.Attachment.Name = part.Name
+	part.AlignPosition.Attachment0 = part[part.Name]
+	part.AlignPosition.Attachment1 = par[part.Name]
+	par[part.Name].Position = pos or vt3()
+	part.AlignPosition.MaxForce = 999999999
+	part.AlignPosition.MaxVelocity = math.huge
+	part.AlignPosition.ReactionForceEnabled = false
+	part.AlignPosition.Responsiveness = math.huge
+	part.Massless=true
+end
+
+for _, v in next, char:GetDescendants() do
+	if v:IsA('BasePart') then
+		addfunc(runsrv.RenderStepped:Connect(function()
+			pcall(function()
+				v.CanCollide = false
+			end)
+		end))
+		addfunc(runsrv.Heartbeat:Connect(function()
+			pcall(function()
+				v.CanCollide = false
+			end)
+		end))
+	elseif v:IsA('Accessory') then
+		create(v.Handle, reanim[v.Name].Handle)
+	end
+end
+
+create(char['Head'],reanim['Head'])
+create(char['Torso'],reanim['Torso'])
+setpos(char['HumanoidRootPart'],reanim['Torso'],vt3(0,0,0))
+create(char['Right Arm'],reanim['Right Arm'])
+create(char['Left Arm'],reanim['Left Arm'])
+create(char['Right Leg'],reanim['Right Leg'])
+create(char['Left Leg'],reanim['Left Leg'])
+
+local lvpart = Instance.new('Part', folder) 
+lvpart.CanCollide = false 
+lvpart.Transparency = 1
+
+addfunc(runsrv.RenderStepped:Connect(function()
+	local lv = cam.CFrame.lookVector
+	local hrp = reanim["HumanoidRootPart"]
+	lvpart.Position = hrp.Position
+	lvpart.CFrame = CFrame.new(lvpart.Position, vt3(lv.X * 10000, lv.Y, lv.Z * 10000))
+end))
+
+local wdown, adown, sdown, ddown, spacedown
+
+addfunc(mouse.KeyDown:Connect(function(k)
+	if k ==' ' then spacedown=true end
+	if k =='w' then wdown=true end
+	if k =='s' then sdown=true end
+	if k =='a' then adown=true end
+	if k =='d' then ddown=true
+	end
+end))
+
+addfunc(mouse.KeyUp:Connect(function(k)
+	if k ==' ' then spacedown=false end
+	if k =='w' then wdown=false end
+	if k =='s' then sdown=false end
+	if k =='a' then adown=false end
+	if k =='d' then ddown=false
+	end
+end))
+
+local function move(x,y,z)
+	lvpart.CFrame = lvpart.CFrame * cf(-x,y,-z)
+	reanim.Humanoid.WalkToPoint = lvpart.Position
+end
+
+addfunc(runsrv.RenderStepped:Connect(function()
+	if wdown then move(0,0,1e4) end
+	if sdown then move(0,0,-1e4) end
+	if adown then move(1e4,0,0) end
+	if ddown then move(-1e4,0,0) end
+	if spacedown==true then reanim.Humanoid.Jump=true end
+	if not(wdown and sdown and adown and ddown) then reanim.Humanoid.WalkToPoint = reanim.HumanoidRootPart.Position end
+end))
+
+cam.CameraSubject = reanim.Humanoid
+
+local reset = Instance.new('BindableEvent')
+addfunc(reset.Event:Connect(function()
+	reanim:Destroy()
+	_G.reanimated = false
+	for _,v in next, char:GetDescendants() do
+		if v:IsA('BasePart') then v.Anchored = true end
+	end
+	local humC = hum:Clone()
+	hum:Destroy()
+	humC.Parent = char
+	for _, v in pairs(funcs) do v:Disconnect() end
+	gui:SetCore("ResetButtonCallback", true)
+	reset:Remove()
+end))
+
+gui:SetCore("ResetButtonCallback", reset)
