@@ -63,6 +63,8 @@ local hum = char.Humanoid
 hum.AutoRotate = false
 hum.WalkSpeed = 0
 hum.JumpPower = 0
+char.Torso.Anchored = true
+wait(5.65)
 char.Torso.Anchored = false
 notif('Reanimation enabled', 'Reanimated.')
 char.Humanoid.Health = 0
