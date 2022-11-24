@@ -68,10 +68,9 @@ fag.Character = char
 hum.AutoRotate = false
 hum.WalkSpeed = 0
 hum.JumpPower = 0
-char.Torso.Anchored=true
-notif('Reanimation in proccess', 'Please wait...')
-wait(5.65)
-char.Torso.Anchored=false
+hum:SetStateEnabled(Enum.HumanoidStateType.Dead, false)
+hum:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
+hum.BreakJointsOnDeath = false
 notif('Reanimation enabled', 'Reanimated.')
 hum.Health = 0
 char.Animate.Disabled = true
@@ -161,6 +160,9 @@ addfunc(reset.Event:Connect(function()
 	for _,v in next, char:GetDescendants() do
 		if v:IsA('BasePart') then v.Anchored = true end
 	end
+	hum:SetStateEnabled(Enum.HumanoidStateType.Dead, true)
+	hum:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, true)
+	hum.BreakJointsOnDeath = true
 	local humC = hum:Clone()
 	hum:Destroy()
 	humC.Parent = char
