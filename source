@@ -68,13 +68,13 @@ fag.Character = char
 hum.AutoRotate = false
 hum.WalkSpeed = 0
 hum.JumpPower = 0
+char.Animate.Disabled = true
+reanim.Animate.Disabled = true
 hum:SetStateEnabled(Enum.HumanoidStateType.Dead, false)
 hum:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
 hum.BreakJointsOnDeath = false
 notif('Reanimation enabled', 'Reanimated.')
 hum.Health = 0
-char.Animate.Disabled = true
-reanim.Animate.Disabled = true
 reanim.Parent = folder
 reanim.HumanoidRootPart.CFrame = char.HumanoidRootPart.CFrame*CFrame.new(0,5,0)
 
